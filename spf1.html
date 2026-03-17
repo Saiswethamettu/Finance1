@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VD Finance | Private Lending</title>
+
+    <style>
+        :root {
+            --dark-blue: #0a3d62;
+            --nav-blue: rgba(30, 95, 140, 0.95);
+            --gold: #d4af37;
+            --whatsapp: #25D366;
+            --error: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0;
+            background: linear-gradient(rgba(10, 61, 98, 0.85), rgba(10, 61, 98, 0.85)), 
+                        url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        header { color: white; padding: 40px 20px; text-align: center; }
+        header h1 { font-size: 2.5rem; margin: 0; letter-spacing: 2px; }
+
+        nav {
+            background: var(--nav-blue);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: 600; text-transform: uppercase; font-size: 0.9rem; cursor: pointer; }
+
+        .section { padding: 40px 20px; max-width: 900px; margin: 0 auto; display: none; animation: fadeIn 0.5s ease; }
+        
+        .form-container { 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://images.unsplash.com/photo-1454165833767-027ffea9e77b?auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            max-width: 480px; 
+            margin: 20px auto; 
+            padding: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0px 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white; 
+        }
+
+        .limit-badge {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--error);
+            color: #ff9f9f;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .note-text {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            font-style: italic;
+            text-align: center;
+        }
+
+        .home-box {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1454165833767-027ffea9e77b?auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 60px 30px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0px 15px 35px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .home-box h2 { color: var(--gold); font-size: 2rem; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .form-container h2 { margin-bottom: 25px; color: var(--gold); text-align: center; }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .btn-action {
+            background: var(--dark-blue);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-action:hover { background: var(--gold); color: black; transform: translateY(-2px); }
+
+        .info-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: center; }
+        .btn-pill { display: block; padding: 12px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 15px; font-size: 0.9rem; text-align: center; }
+        .btn-email { border: 1.5px solid var(--gold); color: var(--gold); }
+        .btn-whatsapp { border: 1.5px solid var(--whatsapp); color: var(--whatsapp); }
+
+        #chat-bubble {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--dark-blue); color: white;
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 4000;
+        }
+
+        #chat-window {
+            position: fixed; bottom: 90px; right: 20px;
+            width: 320px; height: 450px;
+            background: white; border-radius: 15px;
+            display: none; flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            z-index: 4000; border: 1px solid #ddd; overflow: hidden;
+        }
+
+        #chat-header { background: var(--dark-blue); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        #chat-body { flex: 1; padding: 15px; overflow-y: auto; background: #fdfdfd; display: flex; flex-direction: column; gap: 10px; }
+        .chat-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
+        .option-btn { background: #f0f4f7; border: 1px solid var(--dark-blue); color: var(--dark-blue); padding: 8px 12px; border-radius: 15px; font-size: 0.75rem; cursor: pointer; }
+        .msg { padding: 10px 14px; border-radius: 12px; max-width: 85%; line-height: 1.4; font-size: 0.85rem; color: #333; }
+        .msg.bot { background: #eee; align-self: flex-start; }
+        .msg.user { background: var(--dark-blue); color: white; align-self: flex-end; }
+
+        footer { color: rgba(255,255,255,0.7); text-align: center; padding: 30px; font-size: 0.85rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Dashboard Additions */
+        .dashboard-box { background: white; border-radius: 15px; padding: 25px; color: #333; }
+        .loan-card { background: #fdfaf0; border-left: 5px solid var(--gold); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .status-badge { padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="chat-bubble" onclick="toggleChat()">🤖</div>
+<div id="chat-window">
+    <div id="chat-header"><span>VD Finance AI</span><span style="cursor:pointer" onclick="toggleChat()">✖</span></div>
+    <div id="chat-body">
+        <div class="msg bot">Hello! I am your VDF Digital Assistant. Click an option:</div>
+        <div class="chat-options">
+            <button class="option-btn" onclick="botReply('interest')">Interest Rate?</button>
+            <button class="option-btn" onclick="botReply('limit')">Loan Limit?</button>
+            <button class="option-btn" onclick="botReply('process')">How to Apply?</button>
+            <button class="option-btn" onclick="botReply('location')">Office Location?</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <h1>VD Finance</h1>
+    <hr style="border: 2px solid #FFD700; width: 30%; margin: 10px auto;">
+    <marquee behavior="scroll" direction="RIGHT" scrollamount="6">
+        <p style="color:#FFD700; font-weight:bold; text-align:center; margin:0;">PRIVATE CAPITAL. SIMPLE LOANS. DISCIPLINED REPAYMENT.</p>
+    </marquee>
+</header>
+
+<nav>
+    <a onclick="showSection('home')">Home</a>
+    <a onclick="showSection('calc')">Calculator</a>
+    <a onclick="showSection('about')">About</a>
+    <a onclick="showSection('contact')">Contact Us</a>
+    <a onclick="showSection('login')">Login</a>
+</nav>
+
+<div id="home" class="section" style="display: block;">
+    <div class="home-box">
+        <h2>WELCOME TO VDF</h2>
+        <p>We provide short-term personal loans to known individuals. Our lending is private, structured, and trust-based with fixed monthly interest and clear repayment expectations<br><b>Simple Loans. Disciplined Repayment. Mutual Trust.</b></p>
+        <button class="btn-action" onclick="showSection('calc')" style="max-width: 200px; margin-top: 20px; background: var(--gold); color: #000;">Calculate Interest</button>
+    </div>
+</div>
+
+<div id="calc" class="section">
+    <div class="form-container" style="background-image: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=600&q=80');">
+        <h2>Loan Calculator</h2>
+        <div class="limit-badge">⚠️ MAXIMUM LOAN LIMIT: ₹ 50,000</div>
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--gold);">LOAN AMOUNT (INR)</label>
+        <input type="number" id="loanAmount" placeholder="Enter Amount">
+        <button class="btn-action" onclick="calculateLoan()" style="background: var(--gold); color: black;">Calculate Summary</button>
+        <span class="note-text">* This system supports monthly interest calculations only.</span>
+        
+        <div id="loanSummary" style="display:none; margin-top:30px; border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:20px; background: rgba(255,255,255,0.05);">
+            </div>
+    </div>
+</div>
+
+<div id="about" class="section">
+    <div class="form-container" style="background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=600&q=80');">
+        <h2>About VD Finance</h2>
+        <p>• <b>Clear Structure:</b> Fixed 3% monthly interest.<br><br>• <b>Private:</b> Exclusively for verified individuals.<br><br>• <b>Disciplined:</b> Transparent repayment schedules.<br><br>• <b>Penalty:</b> Extra 1% penalty if delayed more than 35 days.</p>
+    </div>
+</div>
+
+<div id="contact" class="section">
+    <div class="form-container" style="background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1523966211575-eb4a01e7dd51?auto=format&fit=crop&w=600&q=80');">
+        <h2>Contact Us</h2>
+        <div class="info-card"><h3>Location</h3><p>Andhra Pradesh</p></div>
+        <div class="info-card"><h3>Office Hours</h3><p>Mon – Sat | 10 AM – 6 PM</p></div>
+        <a href="mailto:finance.vd41@gmail.com?subject=Loan%20Inquiry" class="btn-pill btn-email">✉ Email VD Finance</a>
+        <a href="https://wa.me/919581229243" class="btn-pill btn-whatsapp">✉ WhatsApp</a>
+    </div>
+</div>
+
+<div id="login" class="section">
+    <div class="form-container" style="background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=600&q=80');">
+        <h2>Secure Login</h2>
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--gold);">USER ID</label>
+        <input type="text" id="uid" placeholder="Enter your ID">
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--gold);">PASSWORD</label>
+        <input type="password" id="ups" placeholder="Enter your Password">
+        <button class="btn-action" onclick="handleLogin()" style="background: var(--gold); color: black;">Authorize Access</button>
+        <p id="loginError" style="color:var(--error); text-align:center; display:none; margin-top:10px;">Invalid Credentials</p>
+    </div>
+</div>
+
+<div id="dashboard" class="section">
+    <div class="dashboard-box">
+        <h2 style="color: var(--dark-blue); text-align: center; margin-bottom: 20px;">User Loan Dashboard</h2>
+        
+        <div style="margin-bottom: 25px;">
+            <h3 style="font-size: 1rem; color: #444; border-bottom: 2px solid #2ecc71; display: inline-block;">Active Loans</h3>
+            <div class="loan-card">
+                <p style="margin: 0; font-size: 0.85rem; color: #d4af37; font-weight: bold;">📢 INTEREST RATE REMINDER: 3% Monthly</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+                <p style="margin: 5px 0;"><b>Loan Amount:</b> ₹ 20,000</p>
+                <p style="margin: 5px 0;"><b>Interest/Month:</b> ₹ 600</p>
+                <span class="status-badge" style="background: #eafaf1; color: #2ecc71;">STATUS: ACTIVE</span>
+            </div>
+        </div>
+
+        <div>
+            <h3 style="font-size: 1rem; color: #444; border-bottom: 2px solid #7f8c8d; display: inline-block;">Closed Loans</h3>
+            <div style="padding: 15px; border: 1px dashed #ccc; border-radius: 8px; text-align: center; color: #888;">
+                <p style="margin: 0;">No closed loans at this time.</p>
+            </div>
+        </div>
+
+        <button class="btn-action" style="background: #444; margin-top: 30px;" onclick="showSection('home')">Log Out</button>
+    </div>
+</div>
+
+<footer>© 2026 VD FINANCE • MUTUAL TRUST & RESPONSIBILITY</footer>
+
+<script>
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+    }
+
+    function handleLogin() {
+        const id = document.getElementById('uid').value;
+        const ps = document.getElementById('ups').value;
+        const err = document.getElementById('loginError');
+
+        // Logic: ID 'user' and Password '123'
+        if(id === "user" && ps === "123") {
+            err.style.display = 'none';
+            showSection('dashboard');
+        } else {
+            err.style.display = 'block';
+        }
+    }
+
+    function calculateLoan() {
+        const amt = parseFloat(document.getElementById('loanAmount').value);
+        if (amt > 0 && amt <= 50000) {
+            const interest = amt * 0.3;
+            const processingFee = 100;
+            const penalty = amt * 0.01;
+            const totalNormal = amt + interest + processingFee;
+            const totalWithPenalty = totalNormal + penalty;
+
+            const summaryDiv = document.getElementById('loanSummary');
+            summaryDiv.innerHTML = `
+                <p>Principal: <span style="font-weight:bold;">₹ ${amt.toLocaleString()}</span></p>
+                <p>Interest (3%): <span style="font-weight:bold;">₹ ${interest.toLocaleString()}</span></p>
+                <p>Processing Fee: <span style="font-weight:bold;">₹ ${processingFee}</span></p>
+                <p style="color: #2ecc71; font-weight:bold; font-size:1.2rem; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 10px;">
+                    Total Repayable: ₹ ${totalNormal.toLocaleString()}
+                </p>
+                <div style="background: rgba(231, 76, 60, 0.1); padding: 12px; border-radius: 8px; margin-top: 15px; border: 1px dashed #e74c3c; text-align: center;">
+                    <p style="color: #ff9f9f; font-size: 0.85rem; margin: 0;">
+                        ⚠️ <b>LATE FEE POLICY</b><br>
+                        If unpaid after 5 days grace period (Day 35+),<br>
+                        extra 1% penalty (₹ ${penalty.toLocaleString()}) applies.<br>
+                        <b>Penalty Total: ₹ ${totalWithPenalty.toLocaleString()}</b>
+                    </p>
+                </div>
+                <div style="margin-top: 20px;">
+                    <label style="font-size: 0.85rem; font-weight: bold; color: var(--gold);">DUE DATE (Standard 30 Days):</label>
+                    <input type="date" id="dueDate" style="margin-top:8px; border: 1px solid var(--gold); width:100%; padding:10px; background:transparent; color:white; border-radius:8px;">
+                </div>
+                <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
+                    <h3 style="color: var(--gold); text-align: center; font-size: 1rem;">Complete Your Application</h3>
+                    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdcEZBwbcKQKKrs2RylD95LcAe3HCD2jCUQLAisWBamB-LfUg/viewform?embedded=true" width="100%" height="500" frameborder="0" marginheight="0" marginwidth="0" style="border-radius: 8px; background: white;">Loading…</iframe>
+                </div>
+            `;
+
+            const today = new Date();
+            const futureDate = new Date(today);
+            futureDate.setDate(today.getDate() + 30);
+            document.getElementById('dueDate').value = futureDate.toISOString().split('T')[0];
+            
+            summaryDiv.style.display = 'block';
+        } else { alert("Please enter a valid amount up to ₹50,000"); }
+    }
+
+    function toggleChat() {
+        const win = document.getElementById('chat-window');
+        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function botReply(type) {
+        const body = document.getElementById('chat-body');
+        let userText = ""; let botText = "";
+        switch(type) {
+            case 'interest': userText = "What is the Interest Rate?"; botText = "VD Finance charges a fixed interest of 3% per month."; break;
+            case 'limit': userText = "What is the Maximum Limit?"; botText = "Currently, our maximum lending limit is ₹50,000."; break;
+            case 'process': userText = "How to apply?"; botText = "Lending is private. Please contact us via WhatsApp."; break;
+            case 'location': userText = "Where is your office?"; botText = "Andhra Pradesh. Open Mon-Sat, 10-6."; break;
+        }
+        const uDiv = document.createElement('div'); uDiv.className = 'msg user'; uDiv.innerText = userText; body.appendChild(uDiv);
+        setTimeout(() => {
+            const bDiv = document.createElement('div'); bDiv.className = 'msg bot'; bDiv.innerText = botText; body.appendChild(bDiv);
+            body.scrollTop = body.scrollHeight;
+        }, 400);
+    }
+</script>
+
+</body>
+</html>
